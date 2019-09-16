@@ -1,6 +1,5 @@
 # machine om thema spul in te gooien
 FROM debian:sid-slim as gitmachine
-#ubuntu:18.04 as gitmachine
 MAINTAINER "Ray van Toll"
 RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/B00merang-Project/Windows-10.git /tmp/themes/Windows-10
@@ -10,6 +9,7 @@ RUN git clone https://github.com/B00merang-Artwork/Windows-10.git /tmp/icons/Win
 FROM ubuntu as system
 MAINTAINER "Ray van Toll"
 ENV DEBIAN_FRONTEND nonintractive 
+#ENV LANG="en_US.UTF-8"
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
 	metacity \
 	lxde \
@@ -23,6 +23,9 @@ RUN apt-get install -y \
 	xorgxrdp \
 	ssh \
 	curl
+
+# timezonecrap
+RUN apt-get install -y tzdata
 
 # aanmaken benodigde directories 
 RUN mkdir -p \
