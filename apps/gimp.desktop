@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Gimp
+Comment=Launch Gimp
+Exec=bash -c 'source ~/.containers && gimp'
+Icon=/usr/share/icons/Windows-10/scalable/devices/input-tablet-symbolic.svg
+Type=Application
+Terminal=false
+Categories=Other;
+Hidden=false
+StartupNotify=false

@@ -8,26 +8,17 @@ request(){
 	curl -X POST app-provider -H 'content-type: application/json' -d '{"app":"'$1'"}'
 }
 
-
-nautilus(){
-        request nautilus
-        start nautilus "nautilus $1"
+defaultapp() {
+	request $1
+	start $1 $1
 }
 
-thunderbird(){
-        request thunderbird
-        start thunderbird "thunderbird"
-}
-
-geary(){
-	request geary
-	start geary "geary"
-}
-
-evolution(){
-	request evolution
-	start evolution "evolution"
-}
+thunderbird(){ 	defaultapp thunderbird; }
+geary(){	defaultapp geary;	}
+evolution(){	defaultapp evolution;	}
+nautilus() {	defaultapp nautilus;	}
+libreoffice() {	defaultapp libreoffice;	}
+gimp() {	defaultapp gimp;	}
 
 chrome(){
 	request chrome
@@ -37,11 +28,6 @@ chrome(){
 firefox(){
 	request firefox
 	start firefox "firefox $1" 
-}
-
-libreoffice(){
-	request libreoffice
-	start libreoffice 'libreoffice'
 }
 
 libreoffice-draw(){

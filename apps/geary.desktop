@@ -6,6 +6,6 @@ Exec=bash -c 'source ~/.containers && geary'
 Icon=/usr/share/icons/Windows-10/scalable/apps/claws-mail.svg
 Type=Application
 Terminal=false
-Categories=Other;
+Categories=Mail;
 Hidden=false
 StartupNotify=false
