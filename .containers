@@ -1,51 +1,38 @@
-#source file
-
-start(){
-	until ssh -X -o "StrictHostKeyChecking no" $USER@vcd-$USER-$1 $2 2>/dev/null ; do sleep 0.4 && echo "..." ; done
-}
-
+# source file
+# requesting an application
 request(){
 	curl -X POST app-provider -H 'content-type: application/json' -d '{"app":"'$1'"}'
 }
 
+# running the requested application
+start(){
+	until ssh -X -o "StrictHostKeyChecking no" $USER@vcd-$USER-$@ ; do sleep 0.4 && echo "..." ; done
+}
+
+# function for default apps
 defaultapp() {
 	request $1
 	start $1 $1
 }
 
-thunderbird(){ 	defaultapp thunderbird; }
-geary(){	defaultapp geary;	}
-evolution(){	defaultapp evolution;	}
-nautilus() {	defaultapp nautilus;	}
-libreoffice() {	defaultapp libreoffice;	}
-gimp() {	defaultapp gimp;	}
-
-chrome(){
-	request chrome
-	start chrome 'google-chrome'
+# function for apps with special notation
+specialapp() {
+	request $1
+	start $@
 }
 
-firefox(){
-	request firefox
-	start firefox "firefox $1" 
-}
+# defaultapps
+thunderbird() 	{	defaultapp thunderbird; 	}
+geary()		{	defaultapp geary; 		}
+evolution()	{	defaultapp evolution; 		}
+nautilus() 	{	defaultapp nautilus; 		}
+libreoffice() 	{	defaultapp libreoffice; 	}
+gimp() 		{	defaultapp gimp; 		}
 
-libreoffice-draw(){
-	request libreoffice
-	start libreoffice "libreoffice --draw $1"
-}
-
-libreoffice-writer(){
-	request libreoffice
-	start libreoffice "libreoffice --writer $1"
-}
-
-libreoffice-impress(){
-	request libreoffice
-	start libreoffice "libreoffice --impress $1"
-}
-
-libreoffice-calc(){
-	request libreoffice
-	start libreoffice "libreoffice --calc $1"
-}
+# specialapps
+chrome() 		{ 	specialapp chrome "google-chrome"; 			}
+firefox() 		{	specialapp firefox 'firefox $@'; 			}
+libreoffice-draw() 	{	specialapp libreoffice "libreoffice --draw $@";		}
+libreoffice-writer() 	{	specialapp libreoffice "libreoffice --writer $@";	}
+libreoffice-impress() 	{	specialapp libreoffice "libreoffice --impress $@";	}
+libreoffice-calc() 	{	specialapp libreoffice "libreoffice --calc $@";		}
