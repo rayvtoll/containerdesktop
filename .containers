@@ -1,7 +1,7 @@
 # source file
 # requesting an application
 request(){
-	curl -X POST app-provider -H 'content-type: application/json' -d '{"app":"'$1'"}'
+	curl -X POST app-provider -H 'content-type: application/json' -d '{"app":"'$1'","user":"'$USER'"}'
 }
 
 # running the requested application

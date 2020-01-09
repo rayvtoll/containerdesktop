@@ -27,6 +27,10 @@ RUN apt-get install -y \
 # timezonecrap
 RUN apt-get install -y tzdata
 
+# verwijderen default thema's en icoontjes
+# RUN rm -rf /usr/share/themes/
+# RUN rm -rf /usr/share/icons/
+
 # aanmaken benodigde directories 
 RUN mkdir -p \
 	/usr/share/icons/Windows-10/ \
@@ -34,8 +38,6 @@ RUN mkdir -p \
         /etc/skel/.config/pcmanfm/LXDE/ \
 	/tmp/desktop 
 
-# kopieren files van tijdelijke machine
-#COPY --from=gitmachine /tmp/themes/Windows-10/unity/modes/launcher_bfb.png /tmp/
 COPY --from=gitmachine /tmp/themes/Windows-10/ /usr/share/themes/Windows-10
 COPY --from=gitmachine /tmp/icons/Windows-10/ /usr/share/icons/Windows-10
 
