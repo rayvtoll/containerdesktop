@@ -1,13 +1,5 @@
-# machine om thema spul in te gooien
-FROM debian:sid-slim as gitmachine
-MAINTAINER "Ray van Toll"
-RUN apt-get update && apt-get install -y git
-RUN git clone https://github.com/B00merang-Project/Windows-10.git /tmp/themes/Windows-10
-RUN git clone https://github.com/B00merang-Artwork/Windows-10.git /tmp/icons/Windows-10
-
-# de uiteindelijke container
+# Container voor installatie
 FROM ubuntu as system
-MAINTAINER "Ray van Toll"
 ENV DEBIAN_FRONTEND nonintractive 
 #ENV LANG="en_US.UTF-8"
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
@@ -17,8 +9,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 	gtk2-engines-murrine \
 	supervisor \
 	xrdp \
-	xdg-user-dirs
-RUN apt-get install -y \
+	xdg-user-dirs \
 	xserver-xorg \
 	xorgxrdp \
 	ssh \
@@ -28,18 +19,18 @@ RUN apt-get install -y \
 RUN apt-get install -y tzdata
 
 # verwijderen default thema's en icoontjes
-# RUN rm -rf /usr/share/themes/
-# RUN rm -rf /usr/share/icons/
+RUN rm -rf /usr/share/themes
+RUN cp -r /usr/share/icons/hicolor /tmp/hicolor
+RUN rm -rf /usr/share/icons
 
 # aanmaken benodigde directories 
 RUN mkdir -p \
-	/usr/share/icons/Windows-10/ \
-	/usr/share/themes/Windows-10/ \
-        /etc/skel/.config/pcmanfm/LXDE/ \
+	/usr/share/themes/ \
+	/usr/share/icons/ \
+    /etc/skel/.config/pcmanfm/LXDE/ \
 	/tmp/desktop 
 
-COPY --from=gitmachine /tmp/themes/Windows-10/ /usr/share/themes/Windows-10
-COPY --from=gitmachine /tmp/icons/Windows-10/ /usr/share/icons/Windows-10
+RUN cp -r /tmp/hicolor /usr/share/icons/hicolor
 
 # wat errors voorkomen
 RUN echo "session required pam_loginuid.so" >> /etc/pam.d/lxdm
@@ -53,6 +44,8 @@ RUN echo "root:root" | chpasswd
 RUN xrdp-keygen xrdp auto
 
 # kopieren van benodigde bestanden naar container
+ADD ./themes/Windows-10 /usr/share/themes/Windows-10
+ADD ./icons/Windows-10 /usr/share/icons/Windows-10
 ADD ./.containers /etc/skel/
 ADD ./mimeapps.list /etc/skel/.config/
 ADD ./apps/* /usr/share/applications/
@@ -68,6 +61,17 @@ RUN cp /usr/share/themes/Windows-10/unity/modes/launcher_bfb.png /usr/share/lxde
 RUN apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* 
+
+# de 2e container voor kleiner formaat
+FROM ubuntu as system2
+COPY --from=system entrypoint.sh entrypoint.sh
+COPY --from=system /etc /etc
+COPY --from=system /tmp/windows_10.jpg /tmp/windows_10.jpg
+COPY --from=system /lib /lib
+COPY --from=system /proc /proc
+COPY --from=system /sys /sys
+COPY --from=system /usr /usr
+COPY --from=system /var/log/supervisor /var/log/supervisor
 
 # rdp poort open en starten
 EXPOSE 3389
